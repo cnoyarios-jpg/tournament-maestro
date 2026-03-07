@@ -371,7 +371,8 @@ export default function TournamentDetailPage() {
                   </div>
                 ))}
               </div>
-            ))}
+      ))}
+    </div>
           </div>
         </div>
       )}
