@@ -369,9 +369,9 @@ export default function TournamentDetailPage() {
                       <span className="font-bold">{c.newElo}</span>
                     </span>
                   </div>
-                )))}
+                ))}
               </div>
-            )))}
+            ))}
           </div>
         </div>
       )}
