@@ -517,7 +517,7 @@ function BracketView({
             );
           })}
         </div>
-      )))}
+      ))}
     </div>
   );
 }
