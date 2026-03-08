@@ -1,26 +1,33 @@
 // ===== ENUMS =====
 
 export type TableBrand = 'Presas' | 'Tsunami' | 'Infinity' | 'Val' | 'Garlando' | 'Leonhart' | 'Tornado' | 'Otro';
+export type TableCondition = 'perfecta' | 'buen_estado' | 'estado_normal' | 'deteriorada' | 'fuera_de_servicio';
 export type PlayStyle = 'parado' | 'movimiento';
 export type Position = 'portero' | 'delantero';
 export type VenueStatus = 'activo' | 'pendiente' | 'cambiado' | 'cerrado_temporal' | 'cerrado';
 export type VerificationLevel = 'verificado' | 'no_verificado' | 'en_disputa';
-export type TournamentFormat = 'eliminacion_simple' | 'eliminacion_doble' | 'round_robin' | 'grupos_cuadro' | 'suizo' | 'americano' | 'rey_mesa';
+export type TournamentFormat = 'eliminacion_simple' | 'eliminacion_doble' | 'round_robin' | 'grupos_cuadro' | 'rey_mesa';
 export type PairingMode = 'inscripcion' | 'equilibradas' | 'random';
 export type TournamentStatus = 'borrador' | 'abierto' | 'en_curso' | 'finalizado' | 'cancelado';
 export type MatchStatus = 'pendiente' | 'en_curso' | 'finalizado' | 'confirmado';
 export type TeamRole = 'capitan' | 'jugador';
+export type VerificationType = 'confirm' | 'report_worse' | 'report_closed';
+export type CheckInStatus = 'pendiente' | 'confirmado' | 'ausente';
+export type PairConfirmationStatus = 'pendiente' | 'aceptada' | 'rechazada';
 
 // ===== USERS =====
 
 export interface User {
   id: string;
   email: string;
+  nickname?: string;
   displayName: string;
   city?: string;
+  postalCode?: string;
   avatarUrl?: string;
   preferredPosition: Position;
   preferredStyle: PlayStyle;
+  preferredTable?: TableBrand;
   createdAt: string;
 }
 
@@ -31,14 +38,16 @@ export interface Venue {
   name: string;
   address: string;
   city: string;
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
   photos: string[];
   description?: string;
+  observations?: string;
   status: VenueStatus;
   verificationLevel: VerificationLevel;
   lastVerified?: string;
   confidenceScore: number;
+  verificationCount: number;
   createdBy: string;
   createdAt: string;
 }
@@ -48,7 +57,7 @@ export interface VenueTable {
   venueId: string;
   brand: TableBrand;
   quantity: number;
-  condition?: string;
+  condition: TableCondition;
   photos: string[];
 }
 
@@ -56,7 +65,8 @@ export interface Verification {
   id: string;
   venueId: string;
   userId: string;
-  type: 'confirm' | 'report_change' | 'correction';
+  userName: string;
+  type: VerificationType;
   comment?: string;
   photoUrl?: string;
   createdAt: string;
@@ -88,6 +98,13 @@ export interface Tournament {
   hasCategories: boolean;
   categories: TournamentCategory[];
   createdAt: string;
+  kingLaps?: number;
+  groupSize?: number;
+  qualifyPerGroup?: number;
+  mvpPlayerId?: string;
+  mvpPlayerName?: string;
+  checkInOpen?: boolean;
+  correctedMatches?: string[];
 }
 
 export interface TournamentCategory {
@@ -105,6 +122,9 @@ export interface TournamentPair {
   forward: PairMember;
   seed?: number;
   status: 'inscrita' | 'confirmada' | 'eliminada' | 'ganadora';
+  goalkeeperConfirmed?: PairConfirmationStatus;
+  forwardConfirmed?: PairConfirmationStatus;
+  checkInStatus?: CheckInStatus;
 }
 
 export interface PairMember {
@@ -134,6 +154,9 @@ export interface Match {
   venueId: string;
   confirmedBy: string[];
   createdAt: string;
+  games?: { score1: number; score2: number; winnerId: string }[];
+  corrected?: boolean;
+  correctedBy?: string;
 }
 
 // ===== ELO / RATINGS =====
@@ -149,6 +172,9 @@ export interface PlayerRating {
   losses: number;
   tournamentsPlayed: number;
   tournamentsWon: number;
+  mvpCount: number;
+  currentStreak: number;
+  bestStreak: number;
 }
 
 export interface RatingChange {
@@ -193,9 +219,28 @@ export interface TeamMember {
 export interface AppNotification {
   id: string;
   userId: string;
-  type: 'tournament_invite' | 'team_invite' | 'match_result' | 'verification' | 'general';
+  type: 'tournament_invite' | 'team_invite' | 'match_result' | 'verification' | 'general' | 'pair_confirmation';
   title: string;
   body: string;
   read: boolean;
+  data?: Record<string, string>;
   createdAt: string;
+}
+
+// ===== ROUND ROBIN =====
+
+export interface RoundRobinMatch {
+  id: string;
+  pair1Id: string;
+  pair2Id: string;
+  winnerId?: string;
+  played: boolean;
+}
+
+export interface RoundRobinStanding {
+  pairId: string;
+  played: number;
+  wins: number;
+  losses: number;
+  points: number;
 }
