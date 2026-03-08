@@ -113,6 +113,9 @@ export default function TournamentDetailPage() {
           losses: 0,
           tournamentsPlayed: 0,
           tournamentsWon: 0,
+          mvpCount: 0,
+          currentStreak: 0,
+          bestStreak: 0,
         });
       }
     };
